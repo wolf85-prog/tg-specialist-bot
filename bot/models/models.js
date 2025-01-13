@@ -1,7 +1,7 @@
 const sequelize = require('../connections/db')
 const {DataTypes} = require('sequelize')
 
-const UserBot = sequelize.define('userbot', {
+const UserBot = sequelize.define('wuserbot', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     firstname: {type: DataTypes.STRING},
     lastname: {type: DataTypes.STRING},
@@ -22,7 +22,7 @@ const Message = sequelize.define('wmessage', {
     buttons: {type: DataTypes.STRING},   //названия кнопок;
 })
 
-const Conversation = sequelize.define('conversation', {
+const Conversation = sequelize.define('wconversation', {
     members: {type: DataTypes.ARRAY(DataTypes.STRING)},
 })
 
