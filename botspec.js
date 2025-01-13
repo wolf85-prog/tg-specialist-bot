@@ -23,7 +23,7 @@ app.use('/', router)
 
 //подключение к БД PostreSQL
 const sequelize = require('./bot/connections/db')
-const { UserBot, Conversation } = require('./bot/models/models');
+const { UserBot, Conversation, Message } = require('./bot/models/models');
 
 //socket.io
 const {io} = require("socket.io-client")
