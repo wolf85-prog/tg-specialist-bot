@@ -22,7 +22,7 @@ const Message = sequelize.define('wmessage', {
     buttons: {type: DataTypes.STRING},   //названия кнопок;
 })
 
-const Conversation = sequelize.define('conversation', {
+const Conversation = sequelize.define('wconversation', {
     members: {type: DataTypes.ARRAY(DataTypes.STRING)},
 })
 
