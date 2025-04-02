@@ -34,8 +34,6 @@ const { UserBot, Conversation, Message, Worker } = require('./bot/models/models'
 const {io} = require("socket.io-client")
 const socketUrl = process.env.SOCKET_APP_URL
 
-
-
 // Certificate
 const privateKey = fs.readFileSync('privkey.pem', 'utf8'); //fs.readFileSync('/etc/letsencrypt/live/proj.uley.team/privkey.pem', 'utf8');
 const certificate = fs.readFileSync('cert.pem', 'utf8'); //fs.readFileSync('/etc/letsencrypt/live/proj.uley.team/cert.pem', 'utf8');
@@ -81,6 +79,65 @@ botsupport.on('message', async (msg) => {
                 { 
                     where: {chatId: chatId.toString()} 
                 })
+            }
+
+            //создание чата специалиста
+            try {
+                let conversation_id
+
+                //найти беседу
+                const conversation = await Conversation.findOne({
+                    where: {
+                        members: {
+                            [Op.contains]: [chatId]
+                        }
+                    },
+                })   
+
+                //если нет беседы, то создать 
+                if (!conversation) {
+                    const conv = await Conversation.create(
+                    {
+                        members: [chatId, chatTelegramId],
+                    })
+                    console.log("Беседа успешно создана: ", conv) 
+                    console.log("conversationId: ", conv.id)
+                    
+                    conversation_id = conv.id
+                } else {
+                    console.log('Беседа уже создана в БД')  
+                    console.log("conversationId: ", conversation.id)  
+                    
+                    conversation_id = conversation.id
+                }
+
+                const messageDB = await Message.create(
+                {
+                    text: 'Пользователь нажал кнопку "Старт"', 
+                    senderId: chatId, 
+                    receiverId: chatTelegramId,
+                    type: 'text',
+                    conversationId: conversation_id,
+                    isBot: true,
+                    messageId: '',
+                    replyId: '',
+                })
+
+                // Подключаемся к серверу socket
+                let socket = io(socketUrl);
+                //socket.emit("addUser", chatId)
+
+                socket.emit("sendMessageWorker", {
+                    senderId: chatId,
+                    receiverId: chatTelegramId,
+                    text: 'Пользователь нажал кнопку "Старт"',
+                    type: 'text',
+                    convId: conversation_id,
+                    //isBot: true,
+                })
+
+            } catch (error) {
+                console.log(error.message)
             }
         }
 
