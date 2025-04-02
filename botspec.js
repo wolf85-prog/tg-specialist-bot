@@ -240,7 +240,7 @@ botsupport.on('message', async (msg) => {
                 // сохранить отправленное боту сообщение пользователя в БД
                 const convId = sendMyMessage(str_text, 'text', chatId, messageId, reply_id)
 
-                socket.emit("sendMessageSpec", {
+                socket.emit("sendMessageWorker", {
                     senderId: chatId,
                     receiverId: chatTelegramId,
                     text: str_text,
